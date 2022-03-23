@@ -1,0 +1,38 @@
+name: Terrascan Terraform
+
+on: 
+  workflow_dispatch:
+  pull_request:
+    types: ['opened', 'synchronize']
+    paths: 
+     - '**.tf'
+
+jobs:
+  terrascan_job:
+    runs-on: ubuntu-latest
+    name: terrascan-action
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+    - name: Run Terrascan
+      id: terrascan
+      uses: accurics/terrascan-action@main
+      with:
+        iac_type: 'terraform'
+        iac_version: 'v14'
+        policy_type: 'azure'
+        only_warn: true
+        sarif_upload: true
+        verbose: true
+        skip_rules: AC_AZURE_0389
+        scm_token: ${{ secrets.GITHUB_TOKEN }}
+        #non_recursive:
+        #iac_dir:
+        #policy_path:
+        #config_path:
+        #webhook_url:
+        #webhook_token:
+#    - name: Upload SARIF file
+#      uses: github/codeql-action/upload-sarif@v1
+#      with:
+#        sarif_file: terrascan.sarif
